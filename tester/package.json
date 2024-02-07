@@ -1,9 +1,9 @@
 {
-  "name": "anpan",
+  "name": "tester",
   "module": "index.ts",
   "type": "module",
   "devDependencies": {
-    "@types/bun": "^1.0.5"
+    "@types/bun": "latest"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
