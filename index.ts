@@ -1,4 +1,5 @@
-// type fieldTypes = 'boolean' | 'date' | 'number' | 'number[]' | 'point' | 'string' | 'string[]' | 'text'
+const ULID = require('ulid');
+
 class Schema {
   name: string;
   fields: object;
@@ -82,9 +83,16 @@ class Repository {
       }
     }
 
+    // const EntityKeyName = Symbol(ULID.ulid());
+    // entity['EntityKeyName'] = EntityKeyName;
+
+    // need to generate the EntityKeyName
     // const keyName = entity[EntityKeyName]!;
 
-    // await this.client.jsonset(keyName, entity);
+    // await this.client.json.set(EntityKeyName.toString(), '$', entity);
+    await this.client.json.set(ULID.ulid(), '$', entity);
+
+    // await this.client.set('test1', 'may');
     return;
   }
 }
