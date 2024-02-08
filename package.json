@@ -1,5 +1,6 @@
 {
-  "name": "anpan",
+  "name": "@breadisbuns/anpan",
+  "version": "1.0.0",
   "module": "index.ts",
   "type": "module",
   "devDependencies": {
@@ -7,5 +8,8 @@
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "ulid": "^2.3.0"
   }
 }
