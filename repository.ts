@@ -1,10 +1,12 @@
 const ULID = require('ulid');
+import { Schema } from './schema.ts';
+import type { Client } from './types.ts';
 
 export class Repository {
-  schema: object;
-  client: object;
+  schema: Schema;
+  client: Client;
 
-  constructor(schema: object, client: object) {
+  constructor(schema: Schema, client: Client) {
     this.schema = schema;
     this.client = client;
   }

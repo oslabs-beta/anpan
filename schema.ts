@@ -1,12 +1,14 @@
+import type { Fields, StructureOption } from './types';
+
 export class Schema {
   name: string;
-  fields: object;
-  structureOption: string;
+  fields: Fields;
+  structureOption: StructureOption;
 
   constructor(
     schemaName: string,
-    fields: object,
-    structureOption: string = 'JSON'
+    fields: Fields,
+    structureOption: StructureOption = 'JSON'
   ) {
     this.name = schemaName;
     this.fields = fields;
