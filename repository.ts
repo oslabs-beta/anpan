@@ -18,7 +18,7 @@ export class Repository {
       if (!this.schema.fields.hasOwnProperty(key))
         throw new Error(`schema does not have field ${key}`);
 
-      // check if the type of the property matches the "type" proprty of the corresponding schema field
+      // check if the type of the property matches the "type" property of the corresponding schema field
       switch (this.schema.fields[key].type) {
         case 'string':
           if (typeof value !== 'string')
