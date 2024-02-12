@@ -48,6 +48,22 @@ export class Repository {
           )
             throw new Error(`${key} must be of type point`);
           break;
+        case 'string[]':
+          if (Array.isArray(value)) {
+            value.forEach((el) => {
+              if (typeof el !== 'string')
+                throw new Error(`${key} must be of type string[]`);
+            });
+          } else throw new Error(`${key} must be of type string[]`);
+          break;
+        case 'number[]':
+          if (Array.isArray(value)) {
+            value.forEach((el) => {
+              if (typeof el !== 'number')
+                throw new Error(`${key} must be of type string[]`);
+            });
+          } else throw new Error(`${key} must be of type string[]`);
+          break;
       }
     }
 
