@@ -14,7 +14,6 @@ export class Repository {
     // loop through entity
     // check if entity has key which matches schema key
     for (let [key, value] of Object.entries(entity)) {
-      console.log(this.schema);
       if (!this.schema.fields.hasOwnProperty(key))
         throw new Error(`schema does not have field ${key}`);
 
@@ -67,16 +66,9 @@ export class Repository {
       }
     }
 
-    // const EntityKeyName = Symbol(ULID.ulid());
-    // entity['EntityKeyName'] = EntityKeyName;
+    const entityKeyName = ULID.ulid();
+    await this.client.json.set(entityKeyName, '$', entity);
 
-    // need to generate the EntityKeyName
-    // const keyName = entity[EntityKeyName]!;
-
-    // await this.client.json.set(EntityKeyName.toString(), '$', entity);
-    await this.client.json.set(ULID.ulid(), '$', entity);
-
-    // await this.client.set('test1', 'may');
-    return;
+    return entityKeyName.toString();
   }
 }
