@@ -10,6 +10,11 @@ export class Repository {
     this.schema = schema;
     this.client = client;
   }
+
+  async fetch(ulid: string) {
+    return await this.client.json.get(ulid);
+  }
+
   async save(entity: object) {
     // loop through entity
     // check if entity has key which matches schema key
@@ -69,6 +74,6 @@ export class Repository {
     const entityKeyName = ULID.ulid();
     await this.client.json.set(entityKeyName, '$', entity);
 
-    return entityKeyName.toString();
+    return { ...entity, entityKeyName }; // necessary to stringify?
   }
 }

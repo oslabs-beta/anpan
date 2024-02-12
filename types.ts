@@ -6,6 +6,7 @@ export interface Fields {
 export interface Client {
   json: {
     set: Function;
+    get: Function;
   };
 }
 export type StructureOption = 'HASH' | 'JSON';
