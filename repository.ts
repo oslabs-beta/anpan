@@ -10,11 +10,41 @@ export class Repository {
     this.schema = schema;
     this.client = client;
   }
-  async save(entity: object) {
+
+  async fetch(ulid: string) {
+    try {
+      const result = await this.client.json.get(ulid);
+      if (result === null) {
+        throw new Error(`Key ${ulid} not found`);
+      }
+      return result;
+    } catch (error) {
+      console.error('Error fetching from Redis:', error);
+      throw error;
+    }
+    // return await this.client.json.get(ulid);
+  }
+
+  async remove(ulid: string): Promise<void> {
+    const exists = await this.client.json.get(ulid);
+    if (exists === null) {
+      throw new Error(`Key ${ulid} does not exist`);
+    }
+    await this.client.json.del(ulid);
+  }
+
+  async expire(ulid: string, seconds: number): Promise<void> {
+    const value = await this.client.json.get(ulid);
+    if (value === null) {
+      throw new Error(`Key ${ulid} does not exist`);
+    }
+    await this.client.expire(ulid, seconds);
+  }
+
+  async save(entity: object): Promise<object> {
     // loop through entity
     // check if entity has key which matches schema key
     for (let [key, value] of Object.entries(entity)) {
-      console.log(this.schema);
       if (!this.schema.fields.hasOwnProperty(key))
         throw new Error(`schema does not have field ${key}`);
 
@@ -48,19 +78,28 @@ export class Repository {
           )
             throw new Error(`${key} must be of type point`);
           break;
+        case 'string[]':
+          if (Array.isArray(value)) {
+            value.forEach((el) => {
+              if (typeof el !== 'string')
+                throw new Error(`${key} must be of type string[]`);
+            });
+          } else throw new Error(`${key} must be of type string[]`);
+          break;
+        case 'number[]':
+          if (Array.isArray(value)) {
+            value.forEach((el) => {
+              if (typeof el !== 'number')
+                throw new Error(`${key} must be of type string[]`);
+            });
+          } else throw new Error(`${key} must be of type string[]`);
+          break;
       }
     }
 
-    // const EntityKeyName = Symbol(ULID.ulid());
-    // entity['EntityKeyName'] = EntityKeyName;
+    const entityKeyName = ULID.ulid();
+    await this.client.json.set(entityKeyName, '$', entity);
 
-    // need to generate the EntityKeyName
-    // const keyName = entity[EntityKeyName]!;
-
-    // await this.client.json.set(EntityKeyName.toString(), '$', entity);
-    await this.client.json.set(ULID.ulid(), '$', entity);
-
-    // await this.client.set('test1', 'may');
-    return;
+    return { ...entity, entityKeyName }; // necessary to stringify?
   }
 }
