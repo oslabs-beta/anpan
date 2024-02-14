@@ -10,6 +10,11 @@ export class Repository {
     this.schema = schema;
     this.client = client;
   }
+
+  async fetch(ulid: string) {
+    return await this.client.json.get(ulid);
+  }
+
   async save(entity: object) {
     //intialize object type that takes a string "key" as the key name and a string ('not found') as the value.  This object will be populated with the required fields as set in the optional "required: true" parameter during schema instantiation. The following lines iterate thru the schema of the entity fields to identify the required keys
 
@@ -64,6 +69,30 @@ export class Repository {
           )
             throw new Error(`${key} must be of type point`);
           break;
+        case 'string[]':
+          if (Array.isArray(value)) {
+            value.forEach((el) => {
+              if (typeof el !== 'string')
+                throw new Error(`${key} must be of type string[]`);
+            });
+          } else throw new Error(`${key} must be of type string[]`);
+          break;
+        case 'number[]':
+          if (Array.isArray(value)) {
+            value.forEach((el) => {
+              if (typeof el !== 'number')
+                throw new Error(`${key} must be of type string[]`);
+            });
+          } else throw new Error(`${key} must be of type string[]`);
+          break;
+      }
+    }
+
+    const entityKeyName = ULID.ulid();
+    await this.client.json.set(entityKeyName, '$', entity);
+
+    return { ...entity, entityKeyName }; // necessary to stringify?
+  }
       }
     }
     //check to see if the requiredKeys object has any keys with value notFound. If so, throw error.
