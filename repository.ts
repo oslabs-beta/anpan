@@ -42,11 +42,28 @@ export class Repository {
   }
 
   async save(entity: object): Promise<object> {
+    //intialize object type that takes a string "key" as the key name and a string ('not found') as the value.  This object will be populated with the required fields as set in the optional "required: true" parameter during schema instantiation. The following lines iterate thru the schema of the entity fields to identify the required keys
+
+    const requiredKeys: { [index: string]: string } = {};
+    for (let k = 0; k < Object.entries(this.schema.fields).length; k++) {
+      let keyName = Object.keys(this.schema.fields)[k];
+      console.log('**key: ', keyName);
+      if (this.schema.fields[keyName].required) {
+        if (this.schema.fields[keyName].required === true) {
+          requiredKeys[keyName] = 'notFound';
+        }
+      }
+    }
+
     // loop through entity
     // check if entity has key which matches schema key
     for (let [key, value] of Object.entries(entity)) {
       if (!this.schema.fields.hasOwnProperty(key))
         throw new Error(`schema does not have field ${key}`);
+      //check to see if this is a required key; if it is, annotate "Found" on the requiredKeys object
+      if (requiredKeys.hasOwnProperty(key)) {
+        requiredKeys[key] = 'Found';
+      }
 
       // check if the type of the property matches the "type" property of the corresponding schema field
       switch (this.schema.fields[key].type) {
@@ -97,6 +114,13 @@ export class Repository {
       }
     }
 
+    //check to see if the requiredKeys object has any keys with value notFound. If so, throw error.
+    console.log('**requiredKeys at end of looping is: ', requiredKeys);
+    if (Object.values(requiredKeys).includes('notFound'))
+      throw new Error(
+        `must provide all required fields as specified in schema definition`
+      );
+
     const entityKeyName = ULID.ulid();
     await this.client.json.set(entityKeyName, '$', entity);
 
@@ -140,7 +164,7 @@ export class Repository {
           }
         }
       }
-      if(results.length === 1) return results[0];
+      if (results.length === 1) return results[0];
       return results;
     } catch (error) {
       console.error('Error fetching specific string:', error);
@@ -166,7 +190,7 @@ export class Repository {
           }
         }
       }
-      if(results.length === 1) return results[0];
+      if (results.length === 1) return results[0];
       return results;
     } catch (error) {
       console.error('Error fetching specific number:', error);
@@ -191,7 +215,7 @@ export class Repository {
           }
         }
       }
-      if(results.length === 1) return results[0];
+      if (results.length === 1) return results[0];
       return results;
     } catch (error) {
       console.error('Error fetching specific boolean:', error);
