@@ -2,7 +2,7 @@
   <img style="width: 70%" src="./assets/anpan-logo.png" alt="anpan logo">
 </div> -->
 
-![alt text](https://raw.githubusercontent.com/oslabs-beta/anpan/blob/dev/assets/anpan-logo.png 'anpan logo')
+![anpan logo](https://raw.githubusercontent.com/oslabs-beta/anpan/dev/assets/anpan-logo.png 'anpan logo')
 
 <h1 align="center">anpan</h1>
 
