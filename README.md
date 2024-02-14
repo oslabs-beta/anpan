@@ -1,6 +1,8 @@
-<div align="center">
+<!-- <div align="center">
   <img style="width: 70%" src="./assets/anpan-logo.png" alt="anpan logo">
-</div>
+</div> -->
+
+![alt text](https://raw.githubusercontent.com/oslabs-beta/anpan/blob/dev/assets/anpan-logo.png 'anpan logo')
 
 <h1 align="center">anpan</h1>
 
@@ -12,6 +14,7 @@
 <br>
 
 ## Table of Contents
+
 1. [Description](#description)
 2. [Getting Started](#get-started)
 3. any key points or link to the wiki
@@ -19,11 +22,13 @@
 5. [License](#license)
 
 ## <a name='description'></a> Description
-<strong>anpan</strong> is a lightweight Redis Object Mapper (OM) library built for the Bun runtime. 
+
+<strong>anpan</strong> is a lightweight Redis Object Mapper (OM) library built for the Bun runtime.
 
 ## <a name='get-started'></a> Getting Started
 
 ### Quick Start
+
 ```bash
 bun i @breadisbuns/anpan
 ```
@@ -33,12 +38,14 @@ bun i @breadisbuns/anpan
 ### Other steps here
 
 ## <a name='authors'></a> Authors
+
 - [May Wilcher](https://github.com/rehcliw)
 - [Kellsy Nava-López](https://github.com/kelsIam)
 - [Dillon Hale](https://github.com/HailsD)
 - [Kevin Murphy](https://github.com/murph212)
 
 ## <a name='license'></a> License
+
 This product is licensed under the MIT License - see the LICENSE file for details.
 
 This is an open-source product.
