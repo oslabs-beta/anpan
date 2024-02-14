@@ -1,5 +1,5 @@
 <div align="center">
-  <img style="width: 70%" src="" alt="anpan logo">
+  <img style="width: 70%" src="./assets/anpan-logo.png" alt="anpan logo">
 </div>
 
 <h1 align="center">anpan</h1>
@@ -24,6 +24,9 @@
 ## <a name='get-started'></a> Getting Started
 
 ### Quick Start
+```bash
+bun i @breadisbuns/anpan
+```
 
 ### Connect to your Database
 
