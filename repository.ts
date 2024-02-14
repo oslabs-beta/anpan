@@ -102,4 +102,100 @@ export class Repository {
 
     return { ...entity, entityKeyName }; // necessary to stringify?
   }
+
+  //Will fetch/return all entities in current repository...& all MUST be JSON types.
+  async getAllEntities(): Promise<object[]> {
+    try {
+      const allKeys = await this.client.keys('*');
+      const entities = [];
+
+      for (const key of allKeys) {
+        const entity = await this.fetch(key);
+        entities.push(entity);
+      }
+
+      return entities;
+      // return allKeys;
+    } catch (error) {
+      console.error('Error fetching all entities:', error);
+      throw error;
+    }
+  }
+
+  //Will fetch/return first matching entity field value that matches queried string
+  async getByString(query: string): Promise<object | object[]> {
+    try {
+      const allEntities: object[] = await this.getAllEntities();
+      const results: object[] = [];
+      for (const entity of allEntities) {
+        //Had to create assertion to allow accessing properties by string index...
+        const entityObj: { [key: string]: any } = entity;
+        // const results = [];
+        for (const field in entityObj) {
+          if (
+            typeof entityObj[field] === 'string' &&
+            entityObj[field].includes(query)
+          ) {
+            results.push(entityObj);
+          }
+        }
+      }
+      if(results.length === 1) return results[0];
+      return results;
+    } catch (error) {
+      console.error('Error fetching specific string:', error);
+      throw error;
+    }
+  }
+
+  //Will fetch/return first matching entity field value that matches queried number
+  async getByNumber(query: number): Promise<object | object[]> {
+    try {
+      const allEntities: object[] = await this.getAllEntities();
+      const results: object[] = [];
+      for (const entity of allEntities) {
+        //Had to create assertion to allow accessing properties by string index...
+        const entityObj: { [key: string]: any } = entity;
+        // const results = [];
+        for (const field in entityObj) {
+          if (
+            typeof entityObj[field] === 'number' &&
+            entityObj[field] === query
+          ) {
+            results.push(entityObj);
+          }
+        }
+      }
+      if(results.length === 1) return results[0];
+      return results;
+    } catch (error) {
+      console.error('Error fetching specific number:', error);
+      throw error;
+    }
+  }
+
+  async getByBoolean(query: boolean): Promise<object | object[]> {
+    try {
+      const allEntities: object[] = await this.getAllEntities();
+      const results: object[] = [];
+      for (const entity of allEntities) {
+        //Had to create assertion to allow accessing properties by string index...
+        const entityObj: { [key: string]: any } = entity;
+        // const results = [];
+        for (const field in entityObj) {
+          if (
+            typeof entityObj[field] === 'boolean' &&
+            entityObj[field] === query
+          ) {
+            results.push(entityObj);
+          }
+        }
+      }
+      if(results.length === 1) return results[0];
+      return results;
+    } catch (error) {
+      console.error('Error fetching specific boolean:', error);
+      throw error;
+    }
+  }
 }

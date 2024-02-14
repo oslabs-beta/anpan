@@ -10,5 +10,6 @@ export interface Client {
     del: Function;
   };
   expire: Function;
+  keys: Function;
 }
 export type StructureOption = 'HASH' | 'JSON';
