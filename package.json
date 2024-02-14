@@ -1,6 +1,6 @@
 {
   "name": "@breadisbuns/anpan",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "module": "index.ts",
   "type": "module",
   "repository": {
