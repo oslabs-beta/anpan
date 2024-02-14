@@ -3,6 +3,10 @@
   "version": "1.2.0",
   "module": "index.ts",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oslabs-beta/anpan/tree/dev.git"
+  },
   "devDependencies": {
     "@types/bun": "^1.0.5"
   },
