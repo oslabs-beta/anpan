@@ -106,11 +106,12 @@ class Repository {
 // bicycles.save(flyer);
 // console.log(bicycles);
 
-module.exports = {
-  sayHi: () => {
-    console.log('Anpan says hi!');
-    return;
-  },
-  Schema,
-  Repository,
-};
+// module.exports = {
+//   sayHi: () => {
+//     console.log('Anpan says hi!');
+//     return;
+//   },
+//   Schema,
+//   Repository,
+// };
+module.exports = Schema;
