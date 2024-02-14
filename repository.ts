@@ -68,10 +68,10 @@ export class Repository {
     }
     //check to see if the requiredKeys object has any keys with value notFound. If so, throw error.
     console.log("**requiredKeys at end of looping is: ", requiredKeys);
-    // if (Object.values(requiredKeys).includes("notFound"))
-    //   throw new Error(
-    //     `must provide all required fields as specified in schema definition`
-    //   );
+    if (Object.values(requiredKeys).includes("notFound"))
+      throw new Error(
+        `must provide all required fields as specified in schema definition`
+      );
   }
 
   return;
