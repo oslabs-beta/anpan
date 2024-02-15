@@ -42,12 +42,13 @@ export class Repository {
   }
 
   async save(entity: object): Promise<object> {
+    
     //intialize object type that takes a string "key" as the key name and a string ('not found') as the value.  This object will be populated with the required fields as set in the optional "required: true" parameter during schema instantiation. The following lines iterate thru the schema of the entity fields to identify the required keys
 
     const requiredKeys: { [index: string]: string } = {};
     for (let k = 0; k < Object.entries(this.schema.fields).length; k++) {
       let keyName = Object.keys(this.schema.fields)[k];
-      console.log('**key: ', keyName);
+      // console.log('**key: ', keyName);
       if (this.schema.fields[keyName].required) {
         if (this.schema.fields[keyName].required === true) {
           requiredKeys[keyName] = 'notFound';
@@ -85,15 +86,14 @@ export class Repository {
           break;
         case 'point':
           if (
-            value !== null &&
-            typeof value === 'object' &&
-            !Array.isArray(value) &&
-            !(value instanceof Date) &&
-            Object.keys(value).length === 2 &&
-            typeof value.latitude === 'number' &&
-            typeof value.longitude === 'number'
-          )
+            value === null ||
+            typeof value !== 'object' ||
+            Object.keys(value).length !== 2 ||
+            typeof value.latitude !== 'number' ||
+            typeof value.longitude !== 'number'
+          ) {
             throw new Error(`${key} must be of type point`);
+          }
           break;
         case 'string[]':
           if (Array.isArray(value)) {
@@ -115,7 +115,7 @@ export class Repository {
     }
 
     //check to see if the requiredKeys object has any keys with value notFound. If so, throw error.
-    console.log('**requiredKeys at end of looping is: ', requiredKeys);
+    // console.log('**requiredKeys at end of looping is: ', requiredKeys);
     if (Object.values(requiredKeys).includes('notFound'))
       throw new Error(
         `must provide all required fields as specified in schema definition`
@@ -147,7 +147,7 @@ export class Repository {
   }
 
   //Will fetch/return first matching entity field value that matches queried string
-  async getByString(query: string): Promise<object | object[]> {
+  async getByString(query: string): Promise<object | object[] | null> {
     try {
       const allEntities: object[] = await this.getAllEntities();
       const results: object[] = [];
@@ -164,6 +164,7 @@ export class Repository {
           }
         }
       }
+      if (results.length === 0) return null;
       if (results.length === 1) return results[0];
       return results;
     } catch (error) {
@@ -173,7 +174,7 @@ export class Repository {
   }
 
   //Will fetch/return first matching entity field value that matches queried number
-  async getByNumber(query: number): Promise<object | object[]> {
+  async getByNumber(query: number): Promise<object | object[] | null> {
     try {
       const allEntities: object[] = await this.getAllEntities();
       const results: object[] = [];
@@ -190,6 +191,7 @@ export class Repository {
           }
         }
       }
+      if (results.length === 0) return null;
       if (results.length === 1) return results[0];
       return results;
     } catch (error) {
@@ -198,7 +200,7 @@ export class Repository {
     }
   }
 
-  async getByBoolean(query: boolean): Promise<object | object[]> {
+  async getByBoolean(query: boolean): Promise<object | object[] | null> {
     try {
       const allEntities: object[] = await this.getAllEntities();
       const results: object[] = [];
@@ -215,6 +217,7 @@ export class Repository {
           }
         }
       }
+      if (results.length === 0) return null;
       if (results.length === 1) return results[0];
       return results;
     } catch (error) {
