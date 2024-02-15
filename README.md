@@ -2,7 +2,7 @@
   <img style="width: 70%" src="./assets/anpan-logo.png" alt="anpan logo">
 </div> -->
 
-![anpan logo](https://raw.githubusercontent.com/rehcliw/anpan-tester/main/assets/anpan-logo.png?token=GHSAT0AAAAAACKLTX4WD2VWA62XSHQKU2WQZONLJRQ 'anpan logo')
+![anpan logo](https://raw.githubusercontent.com/oslabs-beta/anpan/dev/assets/anpan-logo.png 'anpan logo')
 
 <h1 align="center">anpan</h1>
 
