@@ -42,7 +42,7 @@ export class Repository {
   }
 
   async save(entity: object): Promise<object> {
-    
+
     //intialize object type that takes a string "key" as the key name and a string ('not found') as the value.  This object will be populated with the required fields as set in the optional "required: true" parameter during schema instantiation. The following lines iterate thru the schema of the entity fields to identify the required keys
 
     const requiredKeys: { [index: string]: string } = {};
@@ -122,6 +122,7 @@ export class Repository {
       );
 
     const entityKeyName = ULID.ulid();
+    //Could Object.assign entityKeyName onto entity before json.set?
     await this.client.json.set(entityKeyName, '$', entity);
 
     return { ...entity, entityKeyName }; // necessary to stringify?
