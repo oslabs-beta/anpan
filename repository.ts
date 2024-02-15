@@ -17,7 +17,7 @@ export class Repository {
       if (result === null) {
         throw new Error(`Key ${ulid} not found`);
       }
-      return result;
+      return { ...result, entityKeyName: ulid };
     } catch (error) {
       console.error('Error fetching from Redis:', error);
       throw error;
@@ -57,6 +57,8 @@ export class Repository {
     // loop through entity
     // check if entity has key which matches schema key
     for (let [key, value] of Object.entries(entity)) {
+      if (key === 'entityKeyName') continue; // skip checks for ulid
+
       if (!this.schema.fields.hasOwnProperty(key))
         throw new Error(`schema does not have field ${key}`);
       //check to see if this is a required key; if it is, annotate "Found" on the requiredKeys object
@@ -131,7 +133,7 @@ export class Repository {
     // const entityKeyName = ULID.ulid();
     await this.client.json.set(entityKeyName, '$', entity);
 
-    return { ...entity, entityKeyName }; // necessary to stringify?
+    return { ...entity, entityKeyName };
   }
 
   //Will fetch/return all entities in current repository...& all MUST be JSON types.
