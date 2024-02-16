@@ -2,7 +2,7 @@ import type { Fields, StructureOption } from "./types";
 
 export class Schema {
   name: string;
-  fields: Fields;
+  private fields: Fields;
   structureOption: StructureOption;
 
   constructor(

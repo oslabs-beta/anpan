@@ -42,13 +42,15 @@ export class Repository {
   }
 
   async save(entity: Entity): Promise<object> {
+    const schemaFields = this.schema.getAllFields();
+
     //intialize object type that takes a string "key" as the key name and a string ('not found') as the value.  This object will be populated with the required fields as set in the optional "required: true" parameter during schema instantiation. The following lines iterate thru the schema of the entity fields to identify the required keys
     const requiredKeys: { [index: string]: string } = {};
-    for (let k = 0; k < Object.entries(this.schema.fields).length; k++) {
-      let keyName = Object.keys(this.schema.fields)[k];
+    for (let k = 0; k < Object.entries(schemaFields).length; k++) {
+      let keyName = Object.keys(schemaFields)[k];
       // console.log('**key: ', keyName);
-      if (this.schema.fields[keyName].required) {
-        if (this.schema.fields[keyName].required === true) {
+      if (schemaFields[keyName].required) {
+        if (schemaFields[keyName].required === true) {
           requiredKeys[keyName] = 'notFound';
         }
       }
@@ -59,7 +61,7 @@ export class Repository {
     for (let [key, value] of Object.entries(entity)) {
       if (key === 'entityKeyName') continue; // skip checks for ulid
 
-      if (!this.schema.fields.hasOwnProperty(key))
+      if (!schemaFields.hasOwnProperty(key))
         throw new Error(`schema does not have field ${key}`);
       //check to see if this is a required key; if it is, annotate "Found" on the requiredKeys object
       if (requiredKeys.hasOwnProperty(key)) {
@@ -67,7 +69,7 @@ export class Repository {
       }
 
       // check if the type of the property matches the "type" property of the corresponding schema field
-      switch (this.schema.fields[key].type) {
+      switch (schemaFields[key].type) {
         case 'string':
           if (typeof value !== 'string')
             throw new Error(`${key} must be of type string`);
