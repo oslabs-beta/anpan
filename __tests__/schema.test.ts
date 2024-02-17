@@ -26,15 +26,4 @@ describe('Schema', () => {
       expect(schemaName).toBe('TestEntity');
     });
   });
-
-  // describe('checks validity', () => {
-  //   test('throws error when invalid datatype', () => {
-  //     expect(
-  //       () =>
-  //         new Schema('TestEntity', {
-  //           bad: "hm",
-  //         })
-  //     ).toThrow(Error);
-  //   });
-  // });
 });
