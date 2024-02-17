@@ -1,6 +1,6 @@
 const ULID = require("ulid");
 import { Schema } from "./schema.ts";
-import type { Client } from "./types.ts";
+import type { Client, Entity } from "./types.ts";
 
 export class Repository {
   schema: Schema;
@@ -17,7 +17,7 @@ export class Repository {
       if (result === null) {
         throw new Error(`Key ${ulid} not found`);
       }
-      return result;
+      return { ...result, entityKeyName: ulid };
     } catch (error) {
       console.error("Error fetching from Redis:", error);
       throw error;
@@ -62,6 +62,8 @@ export class Repository {
     // loop through entity
     // check if entity has key which matches schema key
     for (let [key, value] of Object.entries(entity)) {
+      if (key === "entityKeyName") continue; // skip checks for ulid
+
       if (!this.schema.fields.hasOwnProperty(key))
         throw new Error(`schema does not have field ${key}`);
 
@@ -86,8 +88,12 @@ export class Repository {
             throw new Error(`${key} must be of type number`);
           break;
         case "date":
-          if (!(value instanceof Date))
-            throw new Error(`${key} must be of type Date`);
+          if (
+            !(value instanceof Date) &&
+            !(typeof value === "string" && !isNaN(new Date(value).getTime()))
+          )
+            // if (Object.prototype.toString.call(value) !== '[object Date]')
+            throw new Error(`${key} must be of type Date, got ${value}`);
           break;
         case "point":
           if (
@@ -119,19 +125,23 @@ export class Repository {
       }
     }
 
-    //check to see if the requiredKeys object has any keys remaining with value of notFound. This would indicate a required field in the schema that
-    //was not found in the entity that was passed in as argument (more specically, a property on the requiredKeys object whose value remains "notFound")
+    //check to see if the requiredKeys object has any keys remaining with value of notFound. This would indicate a required field in the schema that was not found in the entity that was passed in as argument (more specically, a property on the requiredKeys object whose value remains "notFound")
     //If so, throw error.
 
-    if (Object.values(requiredKeys).includes("notFound"))
+    if (Object.values(requiredKeys).includes("notFound")) {
       throw new Error(
         `must provide all required fields as specified in schema definition`
       );
+    }
 
-    const entityKeyName = ULID.ulid();
+    // if entity has entityKeyName, already exists, so don't set a new one
+    const entityKeyName = entity.entityKeyName
+      ? entity.entityKeyName
+      : ULID.ulid();
+    // const entityKeyName = ULID.ulid();
     await this.client.json.set(entityKeyName, "$", entity);
 
-    return { ...entity, entityKeyName }; // necessary to stringify?
+    return { ...entity, entityKeyName };
   }
 
   //Will fetch/return all entities in current repository...& all MUST be JSON types.

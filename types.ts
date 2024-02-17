@@ -5,8 +5,8 @@
 
 export interface Fields {
   [index: string]: {
-    type: string | boolean,
-    required?: boolean;
+    type: string | boolean;
+    isRequired?: boolean;
   };
 }
 
@@ -19,4 +19,9 @@ export interface Client {
   expire: Function;
   keys: Function;
 }
+
 export type StructureOption = "HASH" | "JSON";
+
+export interface Entity {
+  entityKeyName?: string;
+}
