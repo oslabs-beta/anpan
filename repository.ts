@@ -42,15 +42,18 @@ export class Repository {
   }
 
   async save(entity: object): Promise<object> {
-    
-    //intialize object type that takes a string "key" as the key name and a string ('not found') as the value.  This object will be populated with the required fields as set in the optional "required: true" parameter during schema instantiation. The following lines iterate thru the schema of the entity fields to identify the required keys
+    //intialize object 'requiredkeys' that takes a string as the key name and a string as the value.
+    //Using Object.entries array, iterate thru the fields object of the schema of the entity passed in as an argument.
+    //Examine the name of each key in the fields object
+    //if there is a key with name of "isRequired", check to see if its value is 'true'
+    //if it is, create a new property on requiredKeys object with that keyname as key, and value of "not Found"
 
     const requiredKeys: { [index: string]: string } = {};
     for (let k = 0; k < Object.entries(this.schema.fields).length; k++) {
       let keyName = Object.keys(this.schema.fields)[k];
       // console.log('**key: ', keyName);
-      if (this.schema.fields[keyName].required) {
-        if (this.schema.fields[keyName].required === true) {
+      if (this.schema.fields[keyName].isRequired) {
+        if (this.schema.fields[keyName].isRequired === true) {
           requiredKeys[keyName] = "notFound";
         }
       }
@@ -61,7 +64,9 @@ export class Repository {
     for (let [key, value] of Object.entries(entity)) {
       if (!this.schema.fields.hasOwnProperty(key))
         throw new Error(`schema does not have field ${key}`);
-      //check to see if this is a required key; if it is, annotate "Found" on the requiredKeys object
+
+      //check to see if the requiredKeys object has a property whose key matches the entity key that is being iterated on
+      //if it does, change the value of the requiredKeys property to "Found", indicating that the isRequired key is present
       if (requiredKeys.hasOwnProperty(key)) {
         requiredKeys[key] = "Found";
       }
@@ -87,10 +92,10 @@ export class Repository {
         case "point":
           if (
             value === null ||
-            typeof value !== 'object' ||
+            typeof value !== "object" ||
             Object.keys(value).length !== 2 ||
-            typeof value.latitude !== 'number' ||
-            typeof value.longitude !== 'number'
+            typeof value.latitude !== "number" ||
+            typeof value.longitude !== "number"
           ) {
             throw new Error(`${key} must be of type point`);
           }
@@ -114,9 +119,11 @@ export class Repository {
       }
     }
 
-    //check to see if the requiredKeys object has any keys with value notFound. If so, throw error.
-    // console.log('**requiredKeys at end of looping is: ', requiredKeys);
-    if (Object.values(requiredKeys).includes('notFound'))
+    //check to see if the requiredKeys object has any keys remaining with value of notFound. This would indicate a required field in the schema that
+    //was not found in the entity that was passed in as argument (more specically, a property on the requiredKeys object whose value remains "notFound")
+    //If so, throw error.
+
+    if (Object.values(requiredKeys).includes("notFound"))
       throw new Error(
         `must provide all required fields as specified in schema definition`
       );
