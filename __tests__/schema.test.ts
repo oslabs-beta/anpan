@@ -1,11 +1,9 @@
-import { describe, expect, test } from 'bun:test';
-import { beforeEach } from 'bun:test';
+import { describe, expect, test, beforeEach } from 'bun:test';
 import { Schema } from '..';
-
-// console.log(Schema);
 
 describe('Schema', () => {
   let schema: Schema;
+
   describe('that defines fields', () => {
     beforeEach(() => {
       schema = new Schema('TestEntity', {
@@ -15,8 +13,6 @@ describe('Schema', () => {
       });
     });
 
-    // test("has a type in value", () => expect(schema.fields.aBoolean.type).toBe('boolean'))
-
     test('returns a field by name', () => {
       const field = schema.getAllFields().aBoolean;
       expect(field).toBeDefined();
@@ -24,11 +20,21 @@ describe('Schema', () => {
       expect(field.type).toBe('boolean');
     });
 
-    test('returns a field by name', () => {
-      const field = schema.getAllFields().aBoolean;
-      expect(field).toBeDefined();
-      // expect(field.aBoolean).toBe('aBoolean')
-      expect(field.type).toBe('boolean');
+    test('returns schema name', () => {
+      const schemaName = schema.getSchemaName();
+      expect(schemaName).toBeDefined();
+      expect(schemaName).toBe('TestEntity');
     });
   });
+
+  // describe('checks validity', () => {
+  //   test('throws error when invalid datatype', () => {
+  //     expect(
+  //       () =>
+  //         new Schema('TestEntity', {
+  //           bad: "hm",
+  //         })
+  //     ).toThrow(Error);
+  //   });
+  // });
 });
