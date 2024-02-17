@@ -15,7 +15,7 @@ export interface Fields {
       | 'string[]'
       | 'point'
       | 'text';
-    required?: boolean;
+    isRequired?: boolean;
   };
 }
 

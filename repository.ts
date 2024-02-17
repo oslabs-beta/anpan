@@ -49,8 +49,8 @@ export class Repository {
     for (let k = 0; k < Object.entries(schemaFields).length; k++) {
       let keyName = Object.keys(schemaFields)[k];
       // console.log('**key: ', keyName);
-      if (schemaFields[keyName].required) {
-        if (schemaFields[keyName].required === true) {
+      if (schemaFields[keyName].isRequired) {
+        if (schemaFields[keyName].isRequired === true) {
           requiredKeys[keyName] = 'notFound';
         }
       }
@@ -63,7 +63,9 @@ export class Repository {
 
       if (!schemaFields.hasOwnProperty(key))
         throw new Error(`schema does not have field ${key}`);
-      //check to see if this is a required key; if it is, annotate "Found" on the requiredKeys object
+
+      //check to see if the requiredKeys object has a property whose key matches the entity key that is being iterated on
+      //if it does, change the value of the requiredKeys property to "Found", indicating that the isRequired key is present
       if (requiredKeys.hasOwnProperty(key)) {
         requiredKeys[key] = 'Found';
       }
@@ -120,8 +122,9 @@ export class Repository {
       }
     }
 
-    //check to see if the requiredKeys object has any keys with value notFound. If so, throw error.
-    // console.log('**requiredKeys at end of looping is: ', requiredKeys);
+    //check to see if the requiredKeys object has any keys remaining with value of notFound. This would indicate a required field in the schema that was not found in the entity that was passed in as argument (more specically, a property on the requiredKeys object whose value remains "notFound")
+    //If so, throw error.
+
     if (Object.values(requiredKeys).includes('notFound')) {
       throw new Error(
         `must provide all required fields as specified in schema definition`

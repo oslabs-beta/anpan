@@ -26,9 +26,10 @@
 <strong>anpan</strong> is a lightweight Redis Object Mapper (OM) library built for the Bun runtime.
 
 ## <a name='get-started'></a> Getting Started
+Be sure that you have the <a href="https://bun.sh/docs/installation">Bun</a> runtime installed and configured.
 
 ### Quick Start
-
+In your application, install the package from the NPM <a href="https://www.npmjs.com/package/@breadisbuns/anpan">module</a>.
 ```bash
 bun i @breadisbuns/anpan
 ```
