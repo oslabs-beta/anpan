@@ -5,7 +5,16 @@
 
 export interface Fields {
   [index: string]: {
-    type: string | boolean;
+    // type: string | boolean; // when is this a boolean?
+    type:
+      | 'string'
+      | 'boolean'
+      | 'date'
+      | 'number'
+      | 'number[]'
+      | 'string[]'
+      | 'point'
+      | 'text';
     isRequired?: boolean;
   };
 }
@@ -20,7 +29,7 @@ export interface Client {
   keys: Function;
 }
 
-export type StructureOption = "HASH" | "JSON";
+export type StructureOption = 'HASH' | 'JSON';
 
 export interface Entity {
   entityKeyName?: string;
