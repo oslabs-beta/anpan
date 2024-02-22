@@ -1,6 +1,6 @@
-const ULID = require('ulid');
-import { Schema } from './schema.ts';
-import type { Client, Entity } from './types.ts';
+const ULID = require("ulid");
+import { Schema } from "./schema.ts";
+import type { Client, Entity } from "./types.ts";
 
 export class Repository {
   schema: Schema;
@@ -19,18 +19,21 @@ export class Repository {
       }
       return { ...result, entityKeyName: ulid };
     } catch (error) {
-      console.error('Error fetching from Redis:', error);
+      console.error("Error fetching from Redis:", error);
       throw error;
     }
     // return await this.client.json.get(ulid);
   }
 
   async remove(ulid: string): Promise<void> {
+    await this.client.json.del(ulid)
     const exists = await this.client.json.get(ulid);
     if (exists === null) {
       throw new Error(`Key ${ulid} does not exist`);
     }
-    await this.client.json.del(ulid);
+    console.log('***calling await this.client.json.del(ulid)')
+    // await this.client.json.del(ulid)
+    console.log('**await this.client.json.del(ulid) was called')
   }
 
   async expire(ulid: string, seconds: number): Promise<void> {
@@ -44,14 +47,14 @@ export class Repository {
   async save(entity: Entity): Promise<object> {
     const schemaFields = this.schema.getAllFields();
 
-    //intialize object type that takes a string "key" as the key name and a string ('not found') as the value.  This object will be populated with the required fields as set in the optional "required: true" parameter during schema instantiation. The following lines iterate thru the schema of the entity fields to identify the required keys
+    //intialize object type that takes a string "key" as the key name and a string ('not found') as the value.  This object will be populated with the required fields as set in the optional "isRequired: true" parameter during schema instantiation. The following lines iterate thru the schema of the entity fields to identify the required keys
     const requiredKeys: { [index: string]: string } = {};
     for (let k = 0; k < Object.entries(schemaFields).length; k++) {
       let keyName = Object.keys(schemaFields)[k];
-      // console.log('**key: ', keyName);
+      console.log('**key of schemaFields: ', keyName);
       if (schemaFields[keyName].isRequired) {
         if (schemaFields[keyName].isRequired === true) {
-          requiredKeys[keyName] = 'notFound';
+          requiredKeys[keyName] = "notFound";
         }
       }
     }
@@ -59,62 +62,62 @@ export class Repository {
     // loop through entity
     // check if entity has key which matches schema key
     for (let [key, value] of Object.entries(entity)) {
-      if (key === 'entityKeyName') continue; // skip checks for ulid
-
+      if (key === "entityKeyName") continue; // skip checks for ulid
+      console.log('***key: ', key, ' value: ', value)
       if (!schemaFields.hasOwnProperty(key))
         throw new Error(`schema does not have field ${key}`);
 
       //check to see if the requiredKeys object has a property whose key matches the entity key that is being iterated on
       //if it does, change the value of the requiredKeys property to "Found", indicating that the isRequired key is present
       if (requiredKeys.hasOwnProperty(key)) {
-        requiredKeys[key] = 'Found';
+        requiredKeys[key] = "Found";
       }
 
       // check if the type of the property matches the "type" property of the corresponding schema field
       switch (schemaFields[key].type) {
-        case 'string':
-          if (typeof value !== 'string')
+        case "string":
+          if (typeof value !== "string")
             throw new Error(`${key} must be of type string`);
           break;
-        case 'boolean':
-          if (typeof value !== 'boolean')
+        case "boolean":
+          if (typeof value !== "boolean")
             throw new Error(`${key} must be of type boolean`);
           break;
-        case 'number':
-          if (typeof value !== 'number')
+        case "number":
+          if (typeof value !== "number")
             throw new Error(`${key} must be of type number`);
           break;
-        case 'date':
+        case "date":
           if (
             !(value instanceof Date) &&
-            !(typeof value === 'string' && !isNaN(new Date(value).getTime()))
+            !(typeof value === "string" && !isNaN(new Date(value).getTime()))
           )
             // if (Object.prototype.toString.call(value) !== '[object Date]')
             throw new Error(`${key} must be of type Date, got ${value}`);
           break;
-        case 'point':
+        case "point":
           if (
             value === null ||
-            typeof value !== 'object' ||
+            typeof value !== "object" ||
             Object.keys(value).length !== 2 ||
-            typeof value.latitude !== 'number' ||
-            typeof value.longitude !== 'number'
+            typeof value.latitude !== "number" ||
+            typeof value.longitude !== "number"
           ) {
             throw new Error(`${key} must be of type point`);
           }
           break;
-        case 'string[]':
+        case "string[]":
           if (Array.isArray(value)) {
             value.forEach((el) => {
-              if (typeof el !== 'string')
+              if (typeof el !== "string")
                 throw new Error(`${key} must be of type string[]`);
             });
           } else throw new Error(`${key} must be of type string[]`);
           break;
-        case 'number[]':
+        case "number[]":
           if (Array.isArray(value)) {
             value.forEach((el) => {
-              if (typeof el !== 'number')
+              if (typeof el !== "number")
                 throw new Error(`${key} must be of type string[]`);
             });
           } else throw new Error(`${key} must be of type string[]`);
@@ -125,7 +128,7 @@ export class Repository {
     //check to see if the requiredKeys object has any keys remaining with value of notFound. This would indicate a required field in the schema that was not found in the entity that was passed in as argument (more specically, a property on the requiredKeys object whose value remains "notFound")
     //If so, throw error.
 
-    if (Object.values(requiredKeys).includes('notFound')) {
+    if (Object.values(requiredKeys).includes("notFound")) {
       throw new Error(
         `must provide all required fields as specified in schema definition`
       );
@@ -136,7 +139,7 @@ export class Repository {
       ? entity.entityKeyName
       : ULID.ulid();
     // const entityKeyName = ULID.ulid();
-    await this.client.json.set(entityKeyName, '$', entity);
+    await this.client.json.set(entityKeyName, "$", entity);
 
     return { ...entity, entityKeyName };
   }
@@ -144,7 +147,7 @@ export class Repository {
   //Will fetch/return all entities in current repository...& all MUST be JSON types.
   async getAllEntities(): Promise<object[]> {
     try {
-      const allKeys = await this.client.keys('*');
+      const allKeys = await this.client.keys("*");
       const entities = [];
 
       for (const key of allKeys) {
@@ -155,7 +158,7 @@ export class Repository {
       return entities;
       // return allKeys;
     } catch (error) {
-      console.error('Error fetching all entities:', error);
+      console.error("Error fetching all entities:", error);
       throw error;
     }
   }
@@ -171,7 +174,7 @@ export class Repository {
         // const results = [];
         for (const field in entityObj) {
           if (
-            typeof entityObj[field] === 'string' &&
+            typeof entityObj[field] === "string" &&
             entityObj[field].includes(query)
           ) {
             results.push(entityObj);
@@ -182,7 +185,7 @@ export class Repository {
       if (results.length === 1) return results[0];
       return results;
     } catch (error) {
-      console.error('Error fetching specific string:', error);
+      console.error("Error fetching specific string:", error);
       throw error;
     }
   }
@@ -198,7 +201,7 @@ export class Repository {
         // const results = [];
         for (const field in entityObj) {
           if (
-            typeof entityObj[field] === 'number' &&
+            typeof entityObj[field] === "number" &&
             entityObj[field] === query
           ) {
             results.push(entityObj);
@@ -209,7 +212,7 @@ export class Repository {
       if (results.length === 1) return results[0];
       return results;
     } catch (error) {
-      console.error('Error fetching specific number:', error);
+      console.error("Error fetching specific number:", error);
       throw error;
     }
   }
@@ -224,7 +227,7 @@ export class Repository {
         // const results = [];
         for (const field in entityObj) {
           if (
-            typeof entityObj[field] === 'boolean' &&
+            typeof entityObj[field] === "boolean" &&
             entityObj[field] === query
           ) {
             results.push(entityObj);
@@ -235,7 +238,7 @@ export class Repository {
       if (results.length === 1) return results[0];
       return results;
     } catch (error) {
-      console.error('Error fetching specific boolean:', error);
+      console.error("Error fetching specific boolean:", error);
       throw error;
     }
   }
