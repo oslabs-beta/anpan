@@ -31,6 +31,12 @@ export interface Client {
 
 export type StructureOption = 'HASH' | 'JSON';
 
+export interface Point {
+  latitude: number;
+  longitude: number;
+}
+
 export interface Entity {
-  entityKeyName?: string;
+  // entityKeyName: string;
+  [key: string]: string | boolean | Date | Point | number | number[] | string[];
 }
