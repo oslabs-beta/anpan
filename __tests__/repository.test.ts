@@ -66,33 +66,6 @@ describe('Repository', () => {
   });
 
   describe('save', () => {
-    // beforeEach(() => {
-    //   schema = new Schema('TestEntity', {
-    //     aBoolean: { type: 'boolean' },
-    //     aNumber: { type: 'number' },
-    //     aString: { type: 'string' },
-    //   });
-    //   // create a false client
-    //   client = {
-    //     json: {
-    //       set: mock(() => {}),
-    //       get: mock(() => {}),
-    //       del: mock(() => {}),
-    //     },
-    //     expire: mock(() => {}),
-    //     keys: mock(() => {}),
-    //   };
-
-    //   repo = new Repository(schema, client);
-    //   console.log('repo: ', repo);
-    // });
-    // //create a false/test entity
-    // const myEntity = {
-    //   aBoolean: true,
-    //   aNumber: 4,
-    //   aString: 'this is a test entity',
-    // };
-
     test('client set is called', () => {
       repo.save(entity);
       expect(client.json.set).toHaveBeenCalled();

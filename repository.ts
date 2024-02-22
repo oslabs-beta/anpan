@@ -26,14 +26,11 @@ export class Repository {
 
   async remove(ulid: string): Promise<void> {
     try {
-      // await this.client.json.del(ulid);
       const exists = await this.client.json.get(ulid);
       if (exists === null) {
         throw new Error(`Key ${ulid} does not exist`);
       }
-      console.log('***calling await this.client.json.del(ulid)');
       await this.client.json.del(ulid);
-      console.log('**await this.client.json.del(ulid) was called');
     } catch (error) {
       console.error('Error removing entity:', error);
       throw error;
