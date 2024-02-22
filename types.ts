@@ -38,5 +38,5 @@ export interface Point {
 
 export interface Entity {
   // entityKeyName: string;
-  [key: string]: string | boolean | Date | Point;
+  [key: string]: string | boolean | Date | Point | number | number[] | string[];
 }

@@ -22,15 +22,22 @@ export class Repository {
       console.error('Error fetching from Redis:', error);
       throw error;
     }
-    // return await this.client.json.get(ulid);
   }
 
   async remove(ulid: string): Promise<void> {
-    const exists = await this.client.json.get(ulid);
-    if (exists === null) {
-      throw new Error(`Key ${ulid} does not exist`);
+    try {
+      // await this.client.json.del(ulid);
+      const exists = await this.client.json.get(ulid);
+      if (exists === null) {
+        throw new Error(`Key ${ulid} does not exist`);
+      }
+      console.log('***calling await this.client.json.del(ulid)');
+      await this.client.json.del(ulid);
+      console.log('**await this.client.json.del(ulid) was called');
+    } catch (error) {
+      console.error('Error removing entity:', error);
+      throw error;
     }
-    await this.client.json.del(ulid);
   }
 
   async expire(ulid: string, seconds: number): Promise<void> {
@@ -44,11 +51,11 @@ export class Repository {
   async save(entity: Entity): Promise<object> {
     const schemaFields = this.schema.getAllFields();
 
-    //intialize object type that takes a string "key" as the key name and a string ('not found') as the value.  This object will be populated with the required fields as set in the optional "required: true" parameter during schema instantiation. The following lines iterate thru the schema of the entity fields to identify the required keys
+    //intialize object type that takes a string "key" as the key name and a string ('not found') as the value.  This object will be populated with the required fields as set in the optional "isRequired: true" parameter during schema instantiation. The following lines iterate thru the schema of the entity fields to identify the required keys
     const requiredKeys: { [index: string]: string } = {};
     for (let k = 0; k < Object.entries(schemaFields).length; k++) {
       let keyName = Object.keys(schemaFields)[k];
-      // console.log('**key: ', keyName);
+      console.log('**key of schemaFields: ', keyName);
       if (schemaFields[keyName].isRequired) {
         if (schemaFields[keyName].isRequired === true) {
           requiredKeys[keyName] = 'notFound';
@@ -60,7 +67,7 @@ export class Repository {
     // check if entity has key which matches schema key
     for (let [key, value] of Object.entries(entity)) {
       if (key === 'entityKeyName') continue; // skip checks for ulid
-
+      console.log('***key: ', key, ' value: ', value);
       if (!schemaFields.hasOwnProperty(key))
         throw new Error(`schema does not have field ${key}`);
 
@@ -93,7 +100,6 @@ export class Repository {
             throw new Error(`${key} must be of type Date, got ${value}`);
           break;
         case 'point':
-          // function
           if (
             // value === null ||
             // typeof value !== 'object' ||

@@ -8,31 +8,34 @@ describe('Repository', () => {
   let client: Client;
   let entity: Entity;
 
-  describe('fetch', () => {
-    beforeEach(() => {
-      schema = new Schema('TestEntity', {
-        aBoolean: { type: 'boolean' },
-      });
-
-      // create a mock client
-      client = {
-        json: {
-          set: mock(() => {}),
-          get: mock(() => {}),
-          del: mock(() => {}),
-        },
-        expire: mock(() => {}),
-        keys: mock(() => {}),
-      };
-
-      repo = new Repository(schema, client);
-
-      // create mock entity
-      entity = {
-        h: true,
-      };
+  beforeEach(() => {
+    schema = new Schema('TestEntity', {
+      aBoolean: { type: 'boolean' },
+      aNumber: { type: 'number' },
+      aString: { type: 'string' },
     });
+    // create a false client
+    client = {
+      json: {
+        set: mock(() => {}),
+        get: mock(() => {}),
+        del: mock(() => {}),
+      },
+      expire: mock(() => {}),
+      keys: mock(() => {}),
+    };
 
+    // create a false/test entity
+    entity = {
+      aBoolean: true,
+      aNumber: 4,
+      aString: 'this is a test entity',
+    };
+
+    repo = new Repository(schema, client);
+  });
+
+  describe('fetch', () => {
     test('client get is called', () => {
       repo.fetch('fakeULID');
       expect(client.json.get).toHaveBeenCalled();
@@ -47,6 +50,52 @@ describe('Repository', () => {
       client.json.get = mock(() => entity);
       const expected = { ...entity, entityKeyName: 'fakeULID' };
       expect(await repo.fetch('fakeULID')).toEqual(expected);
+    });
+  });
+
+  describe('remove', () => {
+    test('client get is called', () => {
+      repo.remove('fakeULID');
+      expect(client.json.get).toHaveBeenCalled();
+    });
+
+    test('client del is called', async () => {
+      await repo.remove('fakeULID');
+      expect(client.json.del).toHaveBeenCalled();
+    });
+  });
+
+  describe('save', () => {
+    // beforeEach(() => {
+    //   schema = new Schema('TestEntity', {
+    //     aBoolean: { type: 'boolean' },
+    //     aNumber: { type: 'number' },
+    //     aString: { type: 'string' },
+    //   });
+    //   // create a false client
+    //   client = {
+    //     json: {
+    //       set: mock(() => {}),
+    //       get: mock(() => {}),
+    //       del: mock(() => {}),
+    //     },
+    //     expire: mock(() => {}),
+    //     keys: mock(() => {}),
+    //   };
+
+    //   repo = new Repository(schema, client);
+    //   console.log('repo: ', repo);
+    // });
+    // //create a false/test entity
+    // const myEntity = {
+    //   aBoolean: true,
+    //   aNumber: 4,
+    //   aString: 'this is a test entity',
+    // };
+
+    test('client set is called', () => {
+      repo.save(entity);
+      expect(client.json.set).toHaveBeenCalled();
     });
   });
 });
