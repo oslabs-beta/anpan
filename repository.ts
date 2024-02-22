@@ -1,6 +1,6 @@
 const ULID = require('ulid');
 import { Schema } from './schema.ts';
-import type { Client, Entity } from './types.ts';
+import type { Client, Entity, Point } from './types.ts';
 
 export class Repository {
   schema: Schema;
@@ -93,12 +93,14 @@ export class Repository {
             throw new Error(`${key} must be of type Date, got ${value}`);
           break;
         case 'point':
+          // function
           if (
-            value === null ||
-            typeof value !== 'object' ||
-            Object.keys(value).length !== 2 ||
-            typeof value.latitude !== 'number' ||
-            typeof value.longitude !== 'number'
+            // value === null ||
+            // typeof value !== 'object' ||
+            // Object.keys(value).length !== 2 ||
+            // typeof value.latitude !== 'number' ||
+            // typeof value.longitude !== 'number' ||
+            !(value as Point)
           ) {
             throw new Error(`${key} must be of type point`);
           }
