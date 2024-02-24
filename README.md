@@ -19,6 +19,7 @@
 2. [Getting Started](#get-started)
 3. [Query](#query)
 4. [Additional Methods](#additional-methods)
+5. [Open Source Information](#open-source-information)
 4. [Authors](#authors)
 5. [License](#license)
 
@@ -152,6 +153,23 @@ console.log(deleteDillon); //Will log undefined
 const kellsyULID = kellsyBakery.entityKeyName;
 const expireKellsy = await theBakeries.expire(kellsyULID, 10); //Will show countdown in RedisInsight ***DOES THIS LOG ANYTHING?***
 ```
+
+## <a name='open-source-information'></a> Open Source Information
+If you would like to contribute to our product, let us know! Below are features and methods we would have liked to implement in our library and webpage.
+
+### Running the library in dev mode
+
+#### Running library tests
+
+### Running the webpage in dev mode
+
+#### Running webpage tests
+
+### Contribution Guidelines
+
+### Features and Methods:
+Add table here:
+Add emojis here:
 
 ## <a name='authors'></a> Authors
 
