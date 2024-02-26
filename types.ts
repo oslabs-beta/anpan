@@ -19,4 +19,9 @@ export interface Client {
   expire: Function;
   keys: Function;
 }
+
 export type StructureOption = "HASH" | "JSON";
+
+export interface Entity {
+  entityKeyName?: string
+}

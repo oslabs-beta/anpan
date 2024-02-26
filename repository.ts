@@ -1,6 +1,6 @@
 const ULID = require('ulid');
 import { Schema } from './schema.ts';
-import type { Client } from './types.ts';
+import type { Client, Entity } from './types.ts';
 
 export class Repository {
   schema: Schema;
@@ -11,20 +11,23 @@ export class Repository {
     this.client = client;
   }
 
+  //Fetch requires a ULID parameter
+  //Will search w/ULID to return back either null | object
   async fetch(ulid: string) {
     try {
       const result = await this.client.json.get(ulid);
       if (result === null) {
         throw new Error(`Key ${ulid} not found`);
       }
-      return result;
+      return { ...result, entityKeyName: ulid };
     } catch (error) {
       console.error('Error fetching from Redis:', error);
       throw error;
     }
-    // return await this.client.json.get(ulid);
   }
 
+  //Remove requires a ULID parameter
+  //Will search w/ULID to delete found Entity and return void | null
   async remove(ulid: string): Promise<void> {
     const exists = await this.client.json.get(ulid);
     if (exists === null) {
@@ -33,6 +36,9 @@ export class Repository {
     await this.client.json.del(ulid);
   }
 
+  //Expire requires a ULID & Number parameters
+  //Will search w/ULID and set timer of expiration on an entity
+  //Will return void | null
   async expire(ulid: string, seconds: number): Promise<void> {
     const value = await this.client.json.get(ulid);
     if (value === null) {
@@ -41,10 +47,10 @@ export class Repository {
     await this.client.expire(ulid, seconds);
   }
 
-  async save(entity: object): Promise<object> {
-
+  //Save requires an Entity type parameter
+  //
+  async save(entity: Entity): Promise<object> {
     //intialize object type that takes a string "key" as the key name and a string ('not found') as the value.  This object will be populated with the required fields as set in the optional "required: true" parameter during schema instantiation. The following lines iterate thru the schema of the entity fields to identify the required keys
-
     const requiredKeys: { [index: string]: string } = {};
     for (let k = 0; k < Object.entries(this.schema.fields).length; k++) {
       let keyName = Object.keys(this.schema.fields)[k];
@@ -59,6 +65,8 @@ export class Repository {
     // loop through entity
     // check if entity has key which matches schema key
     for (let [key, value] of Object.entries(entity)) {
+      if (key === 'entityKeyName') continue; // skip checks for ulid
+
       if (!this.schema.fields.hasOwnProperty(key))
         throw new Error(`schema does not have field ${key}`);
       //check to see if this is a required key; if it is, annotate "Found" on the requiredKeys object
@@ -81,8 +89,12 @@ export class Repository {
             throw new Error(`${key} must be of type number`);
           break;
         case 'date':
-          if (!(value instanceof Date))
-            throw new Error(`${key} must be of type Date`);
+          if (
+            !(value instanceof Date) &&
+            !(typeof value === 'string' && !isNaN(new Date(value).getTime()))
+          )
+            // if (Object.prototype.toString.call(value) !== '[object Date]')
+            throw new Error(`${key} must be of type Date, got ${value}`);
           break;
         case 'point':
           if (
@@ -116,18 +128,23 @@ export class Repository {
 
     //check to see if the requiredKeys object has any keys with value notFound. If so, throw error.
     // console.log('**requiredKeys at end of looping is: ', requiredKeys);
-    if (Object.values(requiredKeys).includes('notFound'))
+    if (Object.values(requiredKeys).includes('notFound')) {
       throw new Error(
         `must provide all required fields as specified in schema definition`
       );
+    }
 
-    const entityKeyName = ULID.ulid();
-    //Could Object.assign entityKeyName onto entity before json.set?
+    // if entity has entityKeyName, already exists, so don't set a new one
+    const entityKeyName = entity.entityKeyName
+      ? entity.entityKeyName
+      : ULID.ulid();
+    // const entityKeyName = ULID.ulid();
     await this.client.json.set(entityKeyName, '$', entity);
 
-    return { ...entity, entityKeyName }; // necessary to stringify?
+    return { ...entity, entityKeyName };
   }
 
+  //getAllEntities requires no parameters
   //Will fetch/return all entities in current repository...& all MUST be JSON types.
   async getAllEntities(): Promise<object[]> {
     try {
@@ -140,22 +157,22 @@ export class Repository {
       }
 
       return entities;
-      // return allKeys;
     } catch (error) {
       console.error('Error fetching all entities:', error);
       throw error;
     }
   }
 
-  //Will fetch/return first matching entity field value that matches queried string
+  //getByString requires a String type parameter
+  //Will search by query string for an Entity w/matching field value.
+  //Returns an object | object[] | null
   async getByString(query: string): Promise<object | object[] | null> {
     try {
       const allEntities: object[] = await this.getAllEntities();
       const results: object[] = [];
       for (const entity of allEntities) {
-        //Had to create assertion to allow accessing properties by string index...
         const entityObj: { [key: string]: any } = entity;
-        // const results = [];
+
         for (const field in entityObj) {
           if (
             typeof entityObj[field] === 'string' &&
@@ -174,15 +191,16 @@ export class Repository {
     }
   }
 
-  //Will fetch/return first matching entity field value that matches queried number
+  //getByNumber requires a Number type parameter
+  //Will search by query number for an Entity w/matching field value.
+  //Returns an object | object[] | null
   async getByNumber(query: number): Promise<object | object[] | null> {
     try {
       const allEntities: object[] = await this.getAllEntities();
       const results: object[] = [];
       for (const entity of allEntities) {
-        //Had to create assertion to allow accessing properties by string index...
         const entityObj: { [key: string]: any } = entity;
-        // const results = [];
+
         for (const field in entityObj) {
           if (
             typeof entityObj[field] === 'number' &&
@@ -201,14 +219,16 @@ export class Repository {
     }
   }
 
+  //getByBoolean requires a Boolean type parameter
+  //Will search by query boolean for an Entity w/matching field flag.
+  //Returns an object | object[] | null
   async getByBoolean(query: boolean): Promise<object | object[] | null> {
     try {
       const allEntities: object[] = await this.getAllEntities();
       const results: object[] = [];
       for (const entity of allEntities) {
-        //Had to create assertion to allow accessing properties by string index...
         const entityObj: { [key: string]: any } = entity;
-        // const results = [];
+
         for (const field in entityObj) {
           if (
             typeof entityObj[field] === 'boolean' &&
@@ -223,6 +243,70 @@ export class Repository {
       return results;
     } catch (error) {
       console.error('Error fetching specific boolean:', error);
+      throw error;
+    }
+  }
+
+  //getByDate requires three String type parameters
+  //Must be in order of Year, Month, Day
+  //Will search by query string for a Entity w/matching field value.
+  //Returns an object | object[] | null
+  async getByDate(
+    year: string,
+    month: string,
+    day: string
+  ): Promise<object | object[] | null> {
+    try {
+      const allEntities: object[] = await this.getAllEntities();
+      const queryDate = `${year}-${month}-${day}`;
+      const results: object[] = [];
+      for (const entity of allEntities) {
+        const entityObj: { [key: string]: any } = entity;
+
+        for (const field in entityObj) {
+          if (
+            typeof entityObj[field] === 'string' &&
+            entityObj[field].includes(queryDate)
+          ) {
+            results.push(entityObj);
+          }
+        }
+      }
+      if (results.length === 0) return null;
+      if (results.length === 1) return results[0];
+      return results;
+    } catch (error) {
+      console.error('Error fetching specific date:', error);
+      throw error;
+    }
+  }
+
+  //getByArray requires a String | Boolean | Number type parameter
+  //Will search by query string for an Entity w/matching field value.
+  //Returns an object | object[] | null
+  async getByArray(
+    query: string | boolean | number
+  ): Promise<object | object[] | null> {
+    try {
+      const allEntities: object[] = await this.getAllEntities();
+      const results: object[] = [];
+      for (const entity of allEntities) {
+        const entityObj: { [key: string]: any } = entity;
+
+        for (const field in entityObj) {
+          if (
+            Array.isArray(entityObj[field]) &&
+            entityObj[field].includes(query)
+          ) {
+            results.push(entityObj);
+          }
+        }
+      }
+      if (results.length === 0) return null;
+      if (results.length === 1) return results[0];
+      return results;
+    } catch (error) {
+      console.error('Error fetching in getOf:', error);
       throw error;
     }
   }
