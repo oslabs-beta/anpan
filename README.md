@@ -10,11 +10,12 @@
 <br>
 <div align="center"><a href="">Visit our Website</a></div>
 <br>
+<div align="center">Read our Medium Launch Article:</div>
 <div align="center">
 <a href=""><img src="https://img.shields.io/badge/Medium-12100E?style=for-the-badge&logo=medium&logoColor=white"/></a>
 </div>
-<div>
-deployment tool here
+<br>
+<div align="center">
 <img src="https://img.shields.io/badge/redis-%23DD0031.svg?&style=for-the-badge&logo=redis&logoColor=white" />
 <img src="https://img.shields.io/badge/bun-282a36?style=for-the-badge&logo=bun&logoColor=fbf0df" />
 <img src="https://img.shields.io/badge/npm-CB3837?style=for-the-badge&logo=npm&logoColor=white" />
@@ -51,7 +52,7 @@ const { Schema, Repository } = require('@breadisbuns/anpan');
 ```
 
 ### Connect to your Database
-Open a connection by requiring in createClient from Redis, using your URI string, and using the connect method from Redis. ***Redis cloud???***
+Open a connection by requiring in createClient from Redis with the Redis cloud link, and using the connect method from Redis.
 ```typescript
 const { createClient } = require('redis');
 
@@ -160,19 +161,20 @@ console.log(deleteDillon); //Will log undefined
 ```typescript
 //---Expire w/ULID---
 const kellsyULID = kellsyBakery.entityKeyName;
-const expireKellsy = await theBakeries.expire(kellsyULID, 10); //Will show countdown in RedisInsight ***DOES THIS LOG ANYTHING?***
+const expireKellsy = await theBakeries.expire(kellsyULID, 10); //Will show countdown in RedisInsight, logs undefined after expiration
 ```
 
 ## <a name='open-source-information'></a> Open Source Information
-If you would like to contribute to our product, let us know! Below are features and methods we would have liked to implement in our library and webpage.
+If you would like to contribute to our product, let us know! Below are features and methods we would have liked to implement in our library and webpage. If you would like to propose a new feature or method, send us a message.
 
 ### Contribution Guidelines
-To contribute, fork and clone our repository for the library and/or the webpage. Once set up, any changes will need to be approved via Pull Requests.
-***What else do we want to specifiy for contributions?***
+To contribute, fork and clone our repository for the library and/or the webpage. Once set up, any changes will need to be approved via Pull Requests. We ask that you include as much information and documentation for any changes made when you create a PR.
 
-### Running the library in dev mode
-
-#### Running library tests
+### Running the library tests in dev mode
+Once cloned, run the command:
+```bash
+bun test
+```
 
 ### Running the webpage in dev mode
 Once cloned, run the command:
@@ -182,12 +184,16 @@ npm run dev
 Head over to localhost:8080 to view the webpage.
 
 #### Running webpage tests
+Run the command:
+```bash
+npm run test
+```
 
 ### Features and Methods:
 | Feature                                                                               | Status    |
 |---------------------------------------------------------------------------------------|-----------|
-| Point Search functionality     | ⏳        |
-|                                          | 🙏🏻        |
+| Point Search functionality     | 🙏🏻        |
+|     | 🙏🏻        |
 
 - ✅ = Ready to use
 - ⏳ = In progress
@@ -197,12 +203,16 @@ Head over to localhost:8080 to view the webpage.
 
 - ### May Wilcher
   <a href="https://github.com/rehcliw"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"/></a>
+  <a href="https://www.linkedin.com/in/may-wilcher/"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"/></a>
 - ### Kellsy Nava-López
   <a href="https://github.com/kelsIam"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"/></a>
+  <a href="https://www.linkedin.com/in/kellsy-nava-l%C3%B3pez/"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"/></a>
 - ### Dillon Hale
   <a href="https://github.com/HailsD"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"/></a>
+  <a href="https://www.linkedin.com/in/dillon-hale/"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"/></a>
 - ### Kevin Murphy
   <a href="https://github.com/murph212"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"/></a>
+  <a href="https://www.linkedin.com/in/kevin-murphy-5173701b/"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"/></a>
 
 ## <a name='license'></a> License
 
