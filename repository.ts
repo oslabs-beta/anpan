@@ -1,6 +1,6 @@
 const ULID = require('ulid');
 import { Schema } from './schema.ts';
-import type { Client, Entity } from './types.ts';
+import type { Client, Entity, Point } from './types.ts';
 
 export class Repository {
   schema: Schema;
@@ -29,11 +29,16 @@ export class Repository {
   //Remove requires a ULID parameter
   //Will search w/ULID to delete found Entity and return void | null
   async remove(ulid: string): Promise<void> {
-    const exists = await this.client.json.get(ulid);
-    if (exists === null) {
-      throw new Error(`Key ${ulid} does not exist`);
+    try {
+      const exists = await this.client.json.get(ulid);
+      if (exists === null) {
+        throw new Error(`Key ${ulid} does not exist`);
+      }
+      await this.client.json.del(ulid);
+    } catch (error) {
+      console.error('Error removing entity:', error);
+      throw error;
     }
-    await this.client.json.del(ulid);
   }
 
   //Expire requires a ULID & Number parameters
@@ -50,13 +55,15 @@ export class Repository {
   //Save requires an Entity type parameter
   //
   async save(entity: Entity): Promise<object> {
-    //intialize object type that takes a string "key" as the key name and a string ('not found') as the value.  This object will be populated with the required fields as set in the optional "required: true" parameter during schema instantiation. The following lines iterate thru the schema of the entity fields to identify the required keys
+    const schemaFields = this.schema.getAllFields();
+
+    //intialize object type that takes a string "key" as the key name and a string ('not found') as the value.  This object will be populated with the required fields as set in the optional "isRequired: true" parameter during schema instantiation. The following lines iterate thru the schema of the entity fields to identify the required keys
     const requiredKeys: { [index: string]: string } = {};
-    for (let k = 0; k < Object.entries(this.schema.fields).length; k++) {
-      let keyName = Object.keys(this.schema.fields)[k];
-      // console.log('**key: ', keyName);
-      if (this.schema.fields[keyName].required) {
-        if (this.schema.fields[keyName].required === true) {
+    for (let k = 0; k < Object.entries(schemaFields).length; k++) {
+      let keyName = Object.keys(schemaFields)[k];
+      console.log('**key of schemaFields: ', keyName);
+      if (schemaFields[keyName].isRequired) {
+        if (schemaFields[keyName].isRequired === true) {
           requiredKeys[keyName] = 'notFound';
         }
       }
@@ -66,16 +73,18 @@ export class Repository {
     // check if entity has key which matches schema key
     for (let [key, value] of Object.entries(entity)) {
       if (key === 'entityKeyName') continue; // skip checks for ulid
-
-      if (!this.schema.fields.hasOwnProperty(key))
+      console.log('***key: ', key, ' value: ', value);
+      if (!schemaFields.hasOwnProperty(key))
         throw new Error(`schema does not have field ${key}`);
-      //check to see if this is a required key; if it is, annotate "Found" on the requiredKeys object
+
+      //check to see if the requiredKeys object has a property whose key matches the entity key that is being iterated on
+      //if it does, change the value of the requiredKeys property to "Found", indicating that the isRequired key is present
       if (requiredKeys.hasOwnProperty(key)) {
         requiredKeys[key] = 'Found';
       }
 
       // check if the type of the property matches the "type" property of the corresponding schema field
-      switch (this.schema.fields[key].type) {
+      switch (schemaFields[key].type) {
         case 'string':
           if (typeof value !== 'string')
             throw new Error(`${key} must be of type string`);
@@ -98,11 +107,12 @@ export class Repository {
           break;
         case 'point':
           if (
-            value === null ||
-            typeof value !== 'object' ||
-            Object.keys(value).length !== 2 ||
-            typeof value.latitude !== 'number' ||
-            typeof value.longitude !== 'number'
+            // value === null ||
+            // typeof value !== 'object' ||
+            // Object.keys(value).length !== 2 ||
+            // typeof value.latitude !== 'number' ||
+            // typeof value.longitude !== 'number' ||
+            !(value as Point)
           ) {
             throw new Error(`${key} must be of type point`);
           }
@@ -126,8 +136,9 @@ export class Repository {
       }
     }
 
-    //check to see if the requiredKeys object has any keys with value notFound. If so, throw error.
-    // console.log('**requiredKeys at end of looping is: ', requiredKeys);
+    //check to see if the requiredKeys object has any keys remaining with value of notFound. This would indicate a required field in the schema that was not found in the entity that was passed in as argument (more specically, a property on the requiredKeys object whose value remains "notFound")
+    //If so, throw error.
+
     if (Object.values(requiredKeys).includes('notFound')) {
       throw new Error(
         `must provide all required fields as specified in schema definition`
