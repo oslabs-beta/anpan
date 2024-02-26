@@ -10,7 +10,16 @@
 <br>
 <div align="center"><a href="">Visit our Website</a></div>
 <br>
-<div align="center"><a href="">Read our Medium Launch Article</a></div>
+<div align="center">
+<a href=""><img src="https://img.shields.io/badge/Medium-12100E?style=for-the-badge&logo=medium&logoColor=white"/></a>
+</div>
+<div>
+deployment tool here
+<img src="https://img.shields.io/badge/redis-%23DD0031.svg?&style=for-the-badge&logo=redis&logoColor=white" />
+<img src="https://img.shields.io/badge/bun-282a36?style=for-the-badge&logo=bun&logoColor=fbf0df" />
+<img src="https://img.shields.io/badge/npm-CB3837?style=for-the-badge&logo=npm&logoColor=white" />
+<img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" />
+</div>
 <br>
 
 ## Table of Contents
@@ -157,26 +166,43 @@ const expireKellsy = await theBakeries.expire(kellsyULID, 10); //Will show count
 ## <a name='open-source-information'></a> Open Source Information
 If you would like to contribute to our product, let us know! Below are features and methods we would have liked to implement in our library and webpage.
 
+### Contribution Guidelines
+To contribute, fork and clone our repository for the library and/or the webpage. Once set up, any changes will need to be approved via Pull Requests.
+***What else do we want to specifiy for contributions?***
+
 ### Running the library in dev mode
 
 #### Running library tests
 
 ### Running the webpage in dev mode
+Once cloned, run the command:
+```bash
+npm run dev
+```
+Head over to localhost:8080 to view the webpage.
 
 #### Running webpage tests
 
-### Contribution Guidelines
-
 ### Features and Methods:
-Add table here:
-Add emojis here:
+| Feature                                                                               | Status    |
+|---------------------------------------------------------------------------------------|-----------|
+| Point Search functionality     | ⏳        |
+|                                          | 🙏🏻        |
+
+- ✅ = Ready to use
+- ⏳ = In progress
+- 🙏🏻 = Looking for contributors
 
 ## <a name='authors'></a> Authors
 
-- [May Wilcher](https://github.com/rehcliw)
-- [Kellsy Nava-López](https://github.com/kelsIam)
-- [Dillon Hale](https://github.com/HailsD)
-- [Kevin Murphy](https://github.com/murph212)
+- ### May Wilcher
+  <a href="https://github.com/rehcliw"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"/></a>
+- ### Kellsy Nava-López
+  <a href="https://github.com/kelsIam"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"/></a>
+- ### Dillon Hale
+  <a href="https://github.com/HailsD"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"/></a>
+- ### Kevin Murphy
+  <a href="https://github.com/murph212"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"/></a>
 
 ## <a name='license'></a> License
 
