@@ -8,7 +8,12 @@
 
 <div align="center">A Redis OM for Bun</div>
 <br>
-<div align="center"><a href="">Visit our Website</a></div>
+<div align="center"><a href="https://breadisbuns.github.io/">Visit our Website</a></div>
+<br>
+<div align="center">Checkout our library:</div>
+<div align="center">
+<a href="https://www.npmjs.com/package/@breadisbuns/anpan"><img src="https://img.shields.io/badge/npm-CB3837?style=for-the-badge&logo=npm&logoColor=white"/></a>
+</div>
 <br>
 <div align="center">Read our Medium Launch Article:</div>
 <div align="center">
@@ -18,7 +23,6 @@
 <div align="center">
 <img src="https://img.shields.io/badge/redis-%23DD0031.svg?&style=for-the-badge&logo=redis&logoColor=white" />
 <img src="https://img.shields.io/badge/bun-282a36?style=for-the-badge&logo=bun&logoColor=fbf0df" />
-<img src="https://img.shields.io/badge/npm-CB3837?style=for-the-badge&logo=npm&logoColor=white" />
 <img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" />
 </div>
 <br>
@@ -35,7 +39,7 @@
 
 ## <a name='description'></a> Description
 
-<strong>anpan</strong> is a lightweight Redis Object Mapper (OM) library built for the Bun runtime. Bun is an up-and-coming runtime environment for Javascript and Typescript that replaces Node.js. Bun’s v1.0 was released on September 8th, 2023, and has since demonstrated that they are 4x faster than Node.js and 2x faster than Deno. Since their release, many developers, like those working with a Redis database, are seeking to run their code in Bun for its speed and efficiency. Unfortunately, no Redis-specific library currently runs in the Bun runtime environment. anpan is a Redis OM that bridges the gap for developers working in Bun with a Redis database. anpan works to abstract away hard-to-understand and write syntax, that, when paired with the <strong><a href="">anpan webpage</a></strong>, helps even a new user learn Redis right away. anpan brings the familiarity of other databases and libraries, like MongoDB and Mongoose, allowing other NoSQL database users easy access and navigation. 
+<strong>anpan</strong> is a lightweight Redis Object Mapper (OM) library built for the Bun runtime. Bun is an up-and-coming runtime environment for Javascript and Typescript that replaces Node.js. Bun’s v1.0 was released on September 8th, 2023, and has since demonstrated that they are 4x faster than Node.js and 2x faster than Deno. Since their release, many developers, like those working with a Redis database, are seeking to run their code in Bun for its speed and efficiency. Unfortunately, no Redis-specific library currently runs in the Bun runtime environment. anpan is a Redis OM that bridges the gap for developers working in Bun with a Redis database. anpan works to abstract away hard-to-understand and write syntax, that, when paired with the <strong><a href="https://breadisbuns.github.io/">anpan webpage</a></strong>, helps even a new user learn Redis right away. anpan brings the familiarity of other databases and libraries, like MongoDB and Mongoose, allowing other NoSQL database users easy access and navigation. 
 
 
 ## <a name='get-started'></a> Getting Started
@@ -52,7 +56,7 @@ const { Schema, Repository } = require('@breadisbuns/anpan');
 ```
 
 ### Connect to your Database
-Open a connection by requiring in createClient from Redis with the Redis cloud link, and using the connect method from Redis.
+Open a connection by requiring in createClient from Redis with the Redis cloud link found in your <a href="https://redis.com/">Redis dashboard</a>, and using the connect method from Redis.
 ```typescript
 const { createClient } = require('redis');
 
@@ -68,7 +72,7 @@ await client.connect().then(console.log('Connected to Redis'));
 ```
 
 ### Define Your Schema
-Now, you can define your schema with the Schema method as shown below or by utilizing the schema generator on the <a href=''>anpan webpage</a>: 
+Now, you can define your schema with the Schema method as shown below or by utilizing the schema generator on the <a href='https://breadisbuns.github.io/'>anpan webpage</a>: 
 ```typescript
 const bakerySchema = new Schema('bakery', {
   name: { type: 'string', isRequired: true },
@@ -165,10 +169,10 @@ const expireKellsy = await theBakeries.expire(kellsyULID, 10); //Will show count
 ```
 
 ## <a name='open-source-information'></a> Open Source Information
-If you would like to contribute to our product, let us know! Below are features and methods we would have liked to implement in our library and webpage. If you would like to propose a new feature or method, send us a message.
+If you would like to contribute to our product, let us know! Below are features and methods we would have liked to implement in our library. If you would like to propose a new feature or method, send us a message.
 
 ### Contribution Guidelines
-To contribute, fork and clone our repository for the library and/or the webpage. Once set up, any changes will need to be approved via Pull Requests. We ask that you include as much information and documentation for any changes made when you create a PR.
+To contribute, fork and clone our repository. Once set up, any changes will need to be approved via Pull Requests. We ask that you include as much information and documentation for any changes made when you create a PR.
 
 ### Running the library tests in dev mode
 Once cloned, run the command:
@@ -176,31 +180,18 @@ Once cloned, run the command:
 bun test
 ```
 
-### Running the webpage in dev mode
-Once cloned, run the command:
-```bash
-npm run dev
-```
-Head over to localhost:8080 to view the webpage.
-
-#### Running webpage tests
-Run the command:
-```bash
-npm run test
-```
-
 ### Features and Methods:
 | Feature                                                                               | Status    |
 |---------------------------------------------------------------------------------------|-----------|
-| Point Search functionality     | 🙏🏻        |
-|     | 🙏🏻        |
+| Point search functionality     | 🙏🏻        |
+| Pagination search functionality    | 🙏🏻        |
+| Sorting functionality    | 🙏🏻        |
 
 - ✅ = Ready to use
 - ⏳ = In progress
 - 🙏🏻 = Looking for contributors
 
 ## <a name='authors'></a> Authors
-
 - ### May Wilcher
   <a href="https://github.com/rehcliw"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"/></a>
   <a href="https://www.linkedin.com/in/may-wilcher/"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"/></a>
@@ -215,7 +206,6 @@ npm run test
   <a href="https://www.linkedin.com/in/kevin-murphy-5173701b/"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"/></a>
 
 ## <a name='license'></a> License
-
 This product is licensed under the MIT License - see the LICENSE file for details.
 
 This is an open-source product.
