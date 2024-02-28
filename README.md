@@ -15,7 +15,7 @@
 <br>
 <div align="center">Read our Medium Launch Article:</div>
 <div align="center">
-<a href=""><img src="https://img.shields.io/badge/Medium-12100E?style=for-the-badge&logo=medium&logoColor=white"/></a>
+<a href="https://medium.com/@anpanomofficial/anpan-a-redisdb-om-for-bun-42a89af745fa"><img src="https://img.shields.io/badge/Medium-12100E?style=for-the-badge&logo=medium&logoColor=white"/></a>
 </div>
 <br>
 <div align="center">
