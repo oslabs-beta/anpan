@@ -1,7 +1,7 @@
 {
   "name": "@breadisbuns/anpan",
   "version": "1.2.3",
-  "module": "index.ts",
+  "module": "src/index.ts",
   "type": "module",
   "repository": {
     "type": "git",
