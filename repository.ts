@@ -11,6 +11,8 @@ export class Repository {
     this.client = client;
   }
 
+  //Fetch requires a ULID parameter
+  //Will search w/ULID to return back either null | object
   async fetch(ulid: string) {
     try {
       const result = await this.client.json.get(ulid);
@@ -24,6 +26,8 @@ export class Repository {
     }
   }
 
+  //Remove requires a ULID parameter
+  //Will search w/ULID to delete found Entity and return void | null
   async remove(ulid: string): Promise<void> {
     try {
       const exists = await this.client.json.get(ulid);
@@ -37,6 +41,9 @@ export class Repository {
     }
   }
 
+  //Expire requires a ULID & Number parameters
+  //Will search w/ULID and set timer of expiration on an entity
+  //Will return void | null
   async expire(ulid: string, seconds: number): Promise<void> {
     const value = await this.client.json.get(ulid);
     if (value === null) {
@@ -45,6 +52,8 @@ export class Repository {
     await this.client.expire(ulid, seconds);
   }
 
+  //Save requires an Entity type parameter
+  //
   async save(entity: Entity): Promise<object> {
     const schemaFields = this.schema.getAllFields();
 
@@ -146,6 +155,7 @@ export class Repository {
     return { ...entity, entityKeyName };
   }
 
+  //getAllEntities requires no parameters
   //Will fetch/return all entities in current repository...& all MUST be JSON types.
   async getAllEntities(): Promise<object[]> {
     try {
@@ -158,22 +168,22 @@ export class Repository {
       }
 
       return entities;
-      // return allKeys;
     } catch (error) {
       console.error('Error fetching all entities:', error);
       throw error;
     }
   }
 
-  //Will fetch/return first matching entity field value that matches queried string
+  //getByString requires a String type parameter
+  //Will search by query string for an Entity w/matching field value.
+  //Returns an object | object[] | null
   async getByString(query: string): Promise<object | object[] | null> {
     try {
       const allEntities: object[] = await this.getAllEntities();
       const results: object[] = [];
       for (const entity of allEntities) {
-        //Had to create assertion to allow accessing properties by string index...
         const entityObj: { [key: string]: any } = entity;
-        // const results = [];
+
         for (const field in entityObj) {
           if (
             typeof entityObj[field] === 'string' &&
@@ -192,15 +202,16 @@ export class Repository {
     }
   }
 
-  //Will fetch/return first matching entity field value that matches queried number
+  //getByNumber requires a Number type parameter
+  //Will search by query number for an Entity w/matching field value.
+  //Returns an object | object[] | null
   async getByNumber(query: number): Promise<object | object[] | null> {
     try {
       const allEntities: object[] = await this.getAllEntities();
       const results: object[] = [];
       for (const entity of allEntities) {
-        //Had to create assertion to allow accessing properties by string index...
         const entityObj: { [key: string]: any } = entity;
-        // const results = [];
+
         for (const field in entityObj) {
           if (
             typeof entityObj[field] === 'number' &&
@@ -219,14 +230,16 @@ export class Repository {
     }
   }
 
+  //getByBoolean requires a Boolean type parameter
+  //Will search by query boolean for an Entity w/matching field flag.
+  //Returns an object | object[] | null
   async getByBoolean(query: boolean): Promise<object | object[] | null> {
     try {
       const allEntities: object[] = await this.getAllEntities();
       const results: object[] = [];
       for (const entity of allEntities) {
-        //Had to create assertion to allow accessing properties by string index...
         const entityObj: { [key: string]: any } = entity;
-        // const results = [];
+
         for (const field in entityObj) {
           if (
             typeof entityObj[field] === 'boolean' &&
@@ -241,6 +254,70 @@ export class Repository {
       return results;
     } catch (error) {
       console.error('Error fetching specific boolean:', error);
+      throw error;
+    }
+  }
+
+  //getByDate requires three String type parameters
+  //Must be in order of Year, Month, Day
+  //Will search by query string for a Entity w/matching field value.
+  //Returns an object | object[] | null
+  async getByDate(
+    year: string,
+    month: string,
+    day: string
+  ): Promise<object | object[] | null> {
+    try {
+      const allEntities: object[] = await this.getAllEntities();
+      const queryDate = `${year}-${month}-${day}`;
+      const results: object[] = [];
+      for (const entity of allEntities) {
+        const entityObj: { [key: string]: any } = entity;
+
+        for (const field in entityObj) {
+          if (
+            typeof entityObj[field] === 'string' &&
+            entityObj[field].includes(queryDate)
+          ) {
+            results.push(entityObj);
+          }
+        }
+      }
+      if (results.length === 0) return null;
+      if (results.length === 1) return results[0];
+      return results;
+    } catch (error) {
+      console.error('Error fetching specific date:', error);
+      throw error;
+    }
+  }
+
+  //getByArray requires a String | Boolean | Number type parameter
+  //Will search by query string for an Entity w/matching field value.
+  //Returns an object | object[] | null
+  async getByArray(
+    query: string | boolean | number
+  ): Promise<object | object[] | null> {
+    try {
+      const allEntities: object[] = await this.getAllEntities();
+      const results: object[] = [];
+      for (const entity of allEntities) {
+        const entityObj: { [key: string]: any } = entity;
+
+        for (const field in entityObj) {
+          if (
+            Array.isArray(entityObj[field]) &&
+            entityObj[field].includes(query)
+          ) {
+            results.push(entityObj);
+          }
+        }
+      }
+      if (results.length === 0) return null;
+      if (results.length === 1) return results[0];
+      return results;
+    } catch (error) {
+      console.error('Error fetching in getOf:', error);
       throw error;
     }
   }
