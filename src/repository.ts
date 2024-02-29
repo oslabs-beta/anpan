@@ -53,15 +53,16 @@ export class Repository {
   }
 
   //Save requires an Entity type parameter
-  //
   async save(entity: Entity): Promise<object> {
     const schemaFields = this.schema.getAllFields();
 
-    //intialize object type that takes a string "key" as the key name and a string ('not found') as the value.  This object will be populated with the required fields as set in the optional "isRequired: true" parameter during schema instantiation. The following lines iterate thru the schema of the entity fields to identify the required keys
+    //intialize object type that takes a string "key" as the key name and a string ('not found') as the value.  
+    //This object will be populated with the required fields as set in the optional "isRequired: true" parameter during schema instantiation. 
+    //The following lines iterate thru the schema of the entity fields to identify the required keys
     const requiredKeys: { [index: string]: string } = {};
     for (let k = 0; k < Object.entries(schemaFields).length; k++) {
       let keyName = Object.keys(schemaFields)[k];
-      console.log('**key of schemaFields: ', keyName);
+      
       if (schemaFields[keyName].isRequired) {
         if (schemaFields[keyName].isRequired === true) {
           requiredKeys[keyName] = 'notFound';
@@ -69,21 +70,20 @@ export class Repository {
       }
     }
 
-    // loop through entity
-    // check if entity has key which matches schema key
+  
+    //Check if entity has key which matches schema key
+    //Check to see if the requiredKeys object has a property whose key matches the entity key that is being iterated on
+    //If it does, change the value of the requiredKeys property to "Found", indicating that the isRequired key is present
+    //Check if the type of the property matches the "type" property of the corresponding schema field
     for (let [key, value] of Object.entries(entity)) {
-      if (key === 'entityKeyName') continue; // skip checks for ulid
-      console.log('***key: ', key, ' value: ', value);
+      if (key === 'entityKeyName') continue; 
       if (!schemaFields.hasOwnProperty(key))
         throw new Error(`schema does not have field ${key}`);
 
-      //check to see if the requiredKeys object has a property whose key matches the entity key that is being iterated on
-      //if it does, change the value of the requiredKeys property to "Found", indicating that the isRequired key is present
       if (requiredKeys.hasOwnProperty(key)) {
         requiredKeys[key] = 'Found';
       }
 
-      // check if the type of the property matches the "type" property of the corresponding schema field
       switch (schemaFields[key].type) {
         case 'string':
           if (typeof value !== 'string')
@@ -102,16 +102,11 @@ export class Repository {
             !(value instanceof Date) &&
             !(typeof value === 'string' && !isNaN(new Date(value).getTime()))
           )
-            // if (Object.prototype.toString.call(value) !== '[object Date]')
+            
             throw new Error(`${key} must be of type Date, got ${value}`);
           break;
         case 'point':
           if (
-            // value === null ||
-            // typeof value !== 'object' ||
-            // Object.keys(value).length !== 2 ||
-            // typeof value.latitude !== 'number' ||
-            // typeof value.longitude !== 'number' ||
             !(value as Point)
           ) {
             throw new Error(`${key} must be of type point`);
@@ -136,20 +131,19 @@ export class Repository {
       }
     }
 
-    //check to see if the requiredKeys object has any keys remaining with value of notFound. This would indicate a required field in the schema that was not found in the entity that was passed in as argument (more specically, a property on the requiredKeys object whose value remains "notFound")
-    //If so, throw error.
-
+    //Check to see if the requiredKeys object has any keys remaining with value of notFound. 
+    //This would indicate a required field in the schema that was not found in the entity that was passed in as argument. 
+    //(more specically, a property on the requiredKeys object whose value remains "notFound")
     if (Object.values(requiredKeys).includes('notFound')) {
       throw new Error(
         `must provide all required fields as specified in schema definition`
       );
     }
 
-    // if entity has entityKeyName, already exists, so don't set a new one
     const entityKeyName = entity.entityKeyName
       ? entity.entityKeyName
       : ULID.ulid();
-    // const entityKeyName = ULID.ulid();
+    
     await this.client.json.set(entityKeyName, '$', entity);
 
     return { ...entity, entityKeyName };
