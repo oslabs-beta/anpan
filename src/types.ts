@@ -1,11 +1,5 @@
-// export interface Fields {
-//   [index: string]: {
-//     type: string}
-//     }
-
 export interface Fields {
   [index: string]: {
-    // type: string | boolean; // when is this a boolean?
     type:
       | 'string'
       | 'boolean'
@@ -37,6 +31,5 @@ export interface Point {
 }
 
 export interface Entity {
-  // entityKeyName: string;
   [key: string]: string | boolean | Date | Point | number | number[] | string[];
 }

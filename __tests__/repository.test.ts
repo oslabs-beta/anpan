@@ -1,6 +1,6 @@
 import { describe, expect, test, beforeEach, mock } from 'bun:test';
-import { Repository, Schema } from '..';
-import type { Client, Entity } from '../types.ts';
+import { Repository, Schema } from '../src/index.ts';
+import type { Client, Entity } from '../src/types.ts';
 
 describe('Repository', () => {
   let schema: Schema;

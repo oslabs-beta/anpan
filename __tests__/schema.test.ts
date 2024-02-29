@@ -1,5 +1,5 @@
 import { describe, expect, test, beforeEach } from "bun:test";
-import { Schema } from "..";
+import { Schema } from "../src";
 
 describe("Schema", () => {
   let schema: Schema;
