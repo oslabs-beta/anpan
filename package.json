@@ -1,0 +1,19 @@
+{
+  "name": "@breadisbuns/anpan",
+  "version": "1.2.3",
+  "module": "src/index.ts",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oslabs-beta/anpan/tree/dev.git"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.0.5"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "ulid": "^2.3.0"
+  }
+}
